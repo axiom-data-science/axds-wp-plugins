@@ -1,67 +1,67 @@
 import './index.css'
 import React, { useState } from 'react'
-import { Chart, EPlotTypes, AxiomSensorPlot } from '@axdspub/axiom-charts'
-import wfs_shellbase_data from './wfs_shellbase.json'
+import { EPlotTypes, AxiomSensorPlot } from '@axdspub/axiom-charts'
+// import wfs_shellbase_data from './wfs_shellbase.json'
 import { createRoot } from 'react-dom/client'
 
-const defaultChartArgs = {
-  settings: {
-    width: 500,
-    height: 200,
-    margin: {
-      top: 10,
-      right: 10,
-      left: 40,
-      bottom: 30,
-    },
-  },
-}
+// const defaultChartArgs = {
+//   settings: {
+//     width: 500,
+//     height: 200,
+//     margin: {
+//       top: 10,
+//       right: 10,
+//       left: 40,
+//       bottom: 30,
+//     },
+//   },
+// }
 
-export const Scatter = {
-  args: {
-    chartArgs: {
-      label: 'Scatter plot',
-      ...defaultChartArgs,
-      plots: [
-        {
-          id: 'waterTemperatureTimeSeriesScatter',
-          dataService: {
-            type: 'preloaded',
-            url: 'preloaded',
-            result: {
-              data: wfs_shellbase_data,
-            },
-            parser: {
-              type: 'geojsonTimeSeries',
-              args: {
-                valueProp: 'salinity(ppt)',
-                timeProp: 'sample_datetime',
-              },
-            },
-          },
-          dimensions: {
-            x: {
-              property: 'time',
-              parameter: 'time',
-            },
-            y: {
-              property: 'salinity(ppt)',
-              parameter: 'salinity',
-              label: 'Salinity (ppt)',
-            },
-          },
-          style: {
-            strokeColor: 'red',
-            strokeWidth: 2,
-            radius: 1,
-            fill: '#FFF',
-          },
-          type: EPlotTypes.line,
-        },
-      ],
-    },
-  },
-}
+// export const Scatter = {
+//   args: {
+//     chartArgs: {
+//       label: 'Scatter plot',
+//       ...defaultChartArgs,
+//       plots: [
+//         {
+//           id: 'waterTemperatureTimeSeriesScatter',
+//           dataService: {
+//             type: 'preloaded',
+//             url: 'preloaded',
+//             result: {
+//               data: wfs_shellbase_data,
+//             },
+//             parser: {
+//               type: 'geojsonTimeSeries',
+//               args: {
+//                 valueProp: 'salinity(ppt)',
+//                 timeProp: 'sample_datetime',
+//               },
+//             },
+//           },
+//           dimensions: {
+//             x: {
+//               property: 'time',
+//               parameter: 'time',
+//             },
+//             y: {
+//               property: 'salinity(ppt)',
+//               parameter: 'salinity',
+//               label: 'Salinity (ppt)',
+//             },
+//           },
+//           style: {
+//             strokeColor: 'red',
+//             strokeWidth: 2,
+//             radius: 1,
+//             fill: '#FFF',
+//           },
+//           type: EPlotTypes.line,
+//         },
+//       ],
+//     },
+//   },
+// }
 
 interface IAppProps {
   email: string
