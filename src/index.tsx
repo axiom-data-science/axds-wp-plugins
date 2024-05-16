@@ -68,11 +68,12 @@ interface IAppProps {
   params: {
     plot_type: string
     station_id: string
+    sensor_id: string
   }
 }
 
 const App = ({ props }: { props: IAppProps }) => {
-  const { station_id } = props.params
+  const { station_id, sensor_id } = props.params
   return (
     <div className='container'>
       <div className='text-slate-800 font-semibold uppercase text-center'>
@@ -81,7 +82,7 @@ const App = ({ props }: { props: IAppProps }) => {
       {/* <Chart {...Scatter.args.chartArgs}></Chart> */}
       <AxiomSensorPlot
         stationId={parseInt(station_id)}
-        parameterGroupId={6}
+        parameterGroupId={parseInt(sensor_id)}
         timeBin='monthly'
       />
     </div>
@@ -106,6 +107,7 @@ const PROPS_FOR_DEVELOPMENT_MODE: IAppProps = {
   params: {
     plot_type: 'scatter',
     station_id: '13838',
+    sensor_id: '6',
   },
 }
 

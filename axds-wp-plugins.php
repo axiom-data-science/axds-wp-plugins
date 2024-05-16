@@ -21,6 +21,7 @@ function axds_wp_plugins( $atts = [] ) {
 		array(
 			'plot_type' => 'scatter',
 			'station_id' => '1',
+			'sensor_id' => '1',
 		), $atts
 	);
 
