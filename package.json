@@ -38,6 +38,7 @@
     "@axdspub/axiom-charts": "^0.0.52",
     "react": "^18.2.0",
     "react-d3-tree": "^3.6.2",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.23.1"
   }
 }
