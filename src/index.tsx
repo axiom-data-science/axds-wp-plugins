@@ -73,6 +73,7 @@ interface IAppProps {
 }
 
 const App = ({ props }: { props: IAppProps }) => {
+  console.log(props)
   const { station_id, sensor_id } = props.params
   return (
     <div className='container'>
@@ -95,6 +96,7 @@ const App = ({ props }: { props: IAppProps }) => {
 declare global {
   interface Window {
     axds_wp_plugins_params: IAppProps
+    parameters: any
   }
 }
 
@@ -113,6 +115,7 @@ const PROPS_FOR_DEVELOPMENT_MODE: IAppProps = {
 
 const rootElement = document.getElementById('axds-wp-plugins-root')
 if (rootElement !== null) {
+  console.log('parameters', window['parameters'])
   if (window.axds_wp_plugins_params === undefined) {
     window.axds_wp_plugins_params = PROPS_FOR_DEVELOPMENT_MODE
   }
