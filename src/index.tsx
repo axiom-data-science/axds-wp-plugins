@@ -1,23 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { RouterProvider, createMemoryRouter } from 'react-router-dom'
+import { AxiomSensorPlot } from '@axdspub/axiom-charts'
 
 declare global {
   interface Window {
     renderGroups: any
   }
-}
-
-interface IGroupCardProps {
-  uuid: string
-  widget: IWidget
-}
-const GroupCard = ({ uuid, widget }: IGroupCardProps) => {
-  return (
-    <div>
-      hi {uuid} {widget.type} {JSON.stringify(widget.parameters)}
-    </div>
-  )
 }
 
 interface IWidget {
@@ -26,25 +14,51 @@ interface IWidget {
   parameters: Record<string, string>
 }
 
-function renderGroups(uuid: string, widget: IWidget) {
-  const root = ReactDOM.createRoot(document.getElementById(uuid))
-  const widgetPaths: Record<string, JSX.Element> = {
-    widget_1: <GroupCard uuid={uuid} widget={widget} />,
-    widget_2: <GroupCard uuid={uuid} widget={widget} />,
+interface ITestWidgetProps {
+  id: string
+  widget: IWidget
+}
+const TestWidget = ({ id, widget }: ITestWidgetProps) => {
+  return (
+    <div className='bg-slate-300 rounded-lg px-4 py-2'>
+      Widget {id}
+      <br />
+      {widget.type}
+      <br />
+      {JSON.stringify(widget.parameters)}
+    </div>
+  )
+}
+
+interface ISensorWidget extends IWidget {
+  parameters: {
+    station_id: string
+    sensor_id: string
   }
-  // const routes = [
-  //   {
-  //     path: 'widget_1',
-  //     element: <GroupCard uuid={uuid} />,
-  //   },
-  // ]
-  // const router = createMemoryRouter(routes, {
-  //   initialEntries: routes.map((route) => route.path),
-  //   initialIndex: 1,
-  // })
+}
+interface ISensorWidgetProps {
+  id: string
+  widget: ISensorWidget
+}
+const SensorWidget = ({ id, widget }: ISensorWidgetProps) => {
+  return (
+    <AxiomSensorPlot
+      stationId={parseInt(widget.parameters.station_id)}
+      parameterGroupId={parseInt(widget.parameters.sensor_id)}
+      timeBin='monthly'
+    />
+  )
+}
+
+function renderWidgets(id: string, widget: IWidget) {
+  const root = ReactDOM.createRoot(document.getElementById(id))
+  const widgetPaths: Record<string, JSX.Element> = {
+    sensor: <SensorWidget id={id} widget={widget as ISensorWidget} />,
+    widget_1: <TestWidget id={id} widget={widget} />,
+    widget_2: <TestWidget id={id} widget={widget} />,
+  }
   root.render(
     <React.StrictMode>
-      {/* <RouterProvider router={router} /> */}
       {widgetPaths[widget.type] !== undefined ? (
         widgetPaths[widget.type]
       ) : (
@@ -54,8 +68,6 @@ function renderGroups(uuid: string, widget: IWidget) {
   )
 }
 
-// window.renderGroups = renderGroups
-
-Object.keys(window.widgets).forEach((uuid) => {
-  renderGroups(uuid, window.widgets[uuid])
+Object.keys(window.widgets).forEach((id) => {
+  renderWidgets(id, window.widgets[id])
 })
