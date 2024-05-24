@@ -1,14 +1,14 @@
 <?php
 /**
  * @package axds-wp-plugins
- * @version 0.1.0
+ * @version 0.4.0
  */
 /*
 Plugin Name: Axiom WP Plugins
 Plugin URI: http://wordpress.org/plugins/hello-dolly/
 Description:
 Author: steven@axds.co
-Version: 0.1.0
+Version: 0.4.0
 */
 
 // Global variable to store all the widget attributes
@@ -50,4 +50,4 @@ function enq_axds_wp_plugins(){
 	wp_enqueue_script( 'axds-wp-plugins' );
 	add_parameters();
 }
-?>
+

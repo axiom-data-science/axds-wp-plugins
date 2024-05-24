@@ -1,11 +1,11 @@
 {
   "name": "axds-wp-plugins",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "",
   "main": "index.tsx",
   "scripts": {
     "dev": "webpack-dev-server --open --config webpack.config.js --mode development",
-    "wp-dev": "webpack --watch",
+    "wp:dev": "webpack --watch",
     "build": "webpack --mode production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
