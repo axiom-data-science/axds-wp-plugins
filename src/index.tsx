@@ -1,10 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { AxiomSensorPlot } from '@axdspub/axiom-charts'
+import { SensorPlot } from '@axdspub/axiom-widgets'
 
 declare global {
   interface Window {
     renderGroups: any
+    widgets: Record<string, IWidget>
   }
 }
 
@@ -42,7 +43,7 @@ interface ISensorWidgetProps {
 }
 const SensorWidget = ({ id, widget }: ISensorWidgetProps) => {
   return (
-    <AxiomSensorPlot
+    <SensorPlot
       stationId={parseInt(widget.parameters.station_id)}
       parameterGroupId={parseInt(widget.parameters.sensor_id)}
       timeBin='monthly'
