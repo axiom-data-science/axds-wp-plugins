@@ -1,1 +1,0 @@
-(self.webpackChunkaxds_wp_plugins=self.webpackChunkaxds_wp_plugins||[]).push([[728],{9728:()=>{}}]);
