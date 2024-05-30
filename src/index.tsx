@@ -1,6 +1,18 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { AxiomSensorPlot } from '@axdspub/axiom-charts'
+import {
+  AxiomSensorPlot,
+  AxiomVirtualSensorPlot,
+  ISensorProps,
+} from '@axdspub/axiom-charts'
+import * as _ from 'lodash'
+
+const camelize = (obj: any) =>
+  _.transform(obj, (acc: any, value, key: string, target) => {
+    const camelKey = _.isArray(target) ? key : _.camelCase(key)
+
+    acc[camelKey] = _.isObject(value) ? camelize(value) : value
+  })
 
 declare global {
   interface Window {
@@ -9,10 +21,17 @@ declare global {
   }
 }
 
+type Base = Record<string, string>
+interface BaseExtended extends Base {
+  id: string
+}
+
+type IWidgetParameters = Record<string, any>
+
 interface IWidget {
   id: string
   type: string
-  parameters: Record<string, any>
+  parameters: Record<string, string | IWidgetParameters>
 }
 
 interface ITestWidgetProps {
@@ -31,24 +50,51 @@ const TestWidget = ({ id, widget }: ITestWidgetProps) => {
   )
 }
 
+interface ISensorWidgetParameters extends IWidgetParameters {
+  station_id: string
+  sensor_id: string
+  height?: string
+  time_bin?: string
+  default_chart_settings?: Record<string, any>
+}
 interface ISensorWidget extends IWidget {
-  parameters: {
-    station_id: string
-    sensor_id: string
-  }
+  parameters: ISensorWidgetParameters
 }
 interface ISensorWidgetProps {
   id: string
   widget: ISensorWidget
 }
+
+const convertParametersToProps = (parameters: ISensorWidgetParameters) => {
+  const converted: any = camelize(parameters)
+
+  if (converted.stationId) {
+    converted.stationId = parseInt(converted.stationId)
+  } else {
+    throw 'station_id is required'
+  }
+
+  if (converted.sensorId) {
+    converted.parameterGroupId = parseInt(converted.sensorId)
+  } else {
+    throw 'sensor_id is required'
+  }
+
+  if (converted.height) {
+    converted.height = parseInt(converted.height)
+  }
+
+  return converted
+}
+
 const SensorWidget = ({ id, widget }: ISensorWidgetProps) => {
-  return (
-    <AxiomSensorPlot
-      stationId={parseInt(widget.parameters.station_id)}
-      parameterGroupId={parseInt(widget.parameters.sensor_id)}
-      timeBin='monthly'
-    />
-  )
+  try {
+    const props = convertParametersToProps(widget.parameters)
+    console.log('camelized', props)
+    return <AxiomSensorPlot {...props} />
+  } catch (error) {
+    return <div>Error {error}</div>
+  }
 }
 
 const setPropertiesFromDotNotation = (
@@ -71,6 +117,7 @@ const setPropertiesFromDotNotation = (
 }
 
 function renderWidgets(id: string, widget: IWidget) {
+  console.log('unparsed parameters', widget.parameters)
   const root = ReactDOM.createRoot(document.getElementById(id))
   Object.entries(widget.parameters).forEach(([key, value]) => {
     const isNestedProperty = !isNaN(parseInt(key))
