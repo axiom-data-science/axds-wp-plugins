@@ -6,6 +6,7 @@ import {
   ISensorProps,
 } from '@axdspub/axiom-charts'
 import * as _ from 'lodash'
+import dot from 'dot-object'
 
 const camelize = (obj: any) =>
   _.transform(obj, (acc: any, value, key: string, target) => {
@@ -67,6 +68,7 @@ interface ISensorWidgetProps {
 
 const convertParametersToProps = (parameters: ISensorWidgetParameters) => {
   const converted: any = camelize(parameters)
+  console.log('converted', converted)
 
   if (converted.stationId) {
     converted.stationId = parseInt(converted.stationId)
@@ -89,6 +91,7 @@ const convertParametersToProps = (parameters: ISensorWidgetParameters) => {
 
 const SensorWidget = ({ id, widget }: ISensorWidgetProps) => {
   try {
+    console.log('here')
     const props = convertParametersToProps(widget.parameters)
     console.log('camelized', props)
     return <AxiomSensorPlot {...props} />
@@ -119,18 +122,29 @@ const setPropertiesFromDotNotation = (
 function renderWidgets(id: string, widget: IWidget) {
   console.log('unparsed parameters', widget.parameters)
   const root = ReactDOM.createRoot(document.getElementById(id))
+  const dotNotations = Object.entries(widget.parameters).filter(
+    ([key, value]) => {
+      const isDotNotation = !isNaN(parseInt(key))
+      return isDotNotation
+    },
+  )
+  const rows: any = {}
+  dotNotations.forEach(([key, value]) => {
+    const split = value.split('=')
+    const propertyName = split[0]
+    const propertyValue = split[1]
+    rows[propertyName] = propertyValue
+  })
+  const parsedDotNotations = dot.object(rows)
+  console.log('rows', dot.object(rows))
+  widget.parameters = { ...widget.parameters, ...parsedDotNotations }
   Object.entries(widget.parameters).forEach(([key, value]) => {
-    const isNestedProperty = !isNaN(parseInt(key))
-    if (isNestedProperty) {
-      const split = value.split('=')
-      const propertyName = split[0]
-      const propertyValue = split[1]
-      const newData: any = {}
-      setPropertiesFromDotNotation(newData, propertyName, propertyValue)
-      widget.parameters = { ...widget.parameters, ...newData }
+    const isDotNotation = !isNaN(parseInt(key))
+    if (isDotNotation) {
       delete widget.parameters[key]
     }
   })
+
   console.log('parsed parameters', widget.parameters)
   const widgetPaths: Record<string, JSX.Element> = {
     sensor: <SensorWidget id={id} widget={widget as ISensorWidget} />,

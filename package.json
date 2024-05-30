@@ -16,6 +16,7 @@
     "@babel/core": "^7.23.9",
     "@babel/preset-env": "^7.23.9",
     "@babel/preset-react": "^7.23.3",
+    "@types/dot-object": "^2.1.6",
     "@types/lodash": "^4.17.4",
     "@types/react": "^18.2.67",
     "@wordpress/scripts": "^27.6.0",
@@ -37,6 +38,7 @@
   },
   "dependencies": {
     "@axdspub/axiom-charts": "^0.0.55",
+    "dot-object": "^2.1.5",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-d3-tree": "^3.6.2",
