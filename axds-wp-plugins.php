@@ -1,14 +1,14 @@
 <?php
 /**
  * @package axds-wp-plugins
- * @version 0.4.0
+ * @version 0.5.0
  */
 /*
 Plugin Name: Axiom WP Plugins
 Plugin URI: http://wordpress.org/plugins/hello-dolly/
 Description:
 Author: steven@axds.co
-Version: 0.4.0
+Version: 0.5.0
 */
 
 // Global variable to store all the widget attributes
@@ -30,7 +30,7 @@ function shortcode( $atts = [], $content = null, $tag = '') {
 
 add_shortcode('widget_1', 'shortcode');
 add_shortcode('widget_2', 'shortcode');
-add_shortcode('sensor', 'shortcode');
+add_shortcode('axiom_sensor', 'shortcode');
 
 function add_parameters() {
 	wp_localize_script( 'axds-wp-plugins', 'widgets', $GLOBALS['widgets'] ); //localize script to pass PHP data to JS

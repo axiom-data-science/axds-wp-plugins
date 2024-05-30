@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import {
   AxiomSensorPlot,
   AxiomVirtualSensorPlot,
+  IChartSettingsProps,
   ISensorProps,
 } from '@axdspub/axiom-charts'
 import * as _ from 'lodash'
@@ -68,6 +69,8 @@ interface ISensorWidgetProps {
 
 const convertParametersToProps = (parameters: ISensorWidgetParameters) => {
   const converted: any = camelize(parameters)
+  const defaultChartSettings =
+    converted.defaultChartSettings as IChartSettingsProps
   console.log('converted', converted)
 
   if (converted.stationId) {
@@ -78,12 +81,45 @@ const convertParametersToProps = (parameters: ISensorWidgetParameters) => {
 
   if (converted.sensorId) {
     converted.parameterGroupId = parseInt(converted.sensorId)
+    delete converted.sensorId
   } else {
-    throw 'sensor_id is required'
+    if (converted.parameterGroupId) {
+      converted.parameterGroupId = parseInt(converted.parameterGroupId)
+    } else {
+      throw 'sensor_id is required'
+    }
   }
 
-  if (converted.height) {
-    converted.height = parseInt(converted.height)
+  if (defaultChartSettings?.height !== undefined) {
+    defaultChartSettings.height = parseInt(String(defaultChartSettings.height))
+  }
+
+  if (defaultChartSettings?.includeControls !== undefined) {
+    defaultChartSettings.includeControls =
+      String(defaultChartSettings.includeControls) === 'true'
+  }
+
+  if (
+    converted?.defaultChartSettings?.plotGroupSettings?.timeSeries?.exclude !==
+    undefined
+  ) {
+    console.log(
+      'exclude',
+      converted.defaultChartSettings.plotGroupSettings.timeSeries.exclude,
+    )
+    converted.defaultChartSettings.plotGroupSettings.timeSeries.exclude =
+      converted.defaultChartSettings.plotGroupSettings.timeSeries.exclude.split(
+        ',',
+      )
+  }
+
+  if (
+    converted?.defaultChartSettings?.plotGroupSettings?.timeSeriesStats
+      ?.include !== undefined
+  ) {
+    converted.defaultChartSettings.plotGroupSettings.timeSeriesStats.include =
+      converted.defaultChartSettings.plotGroupSettings.timeSeriesStats
+        .include === 'true'
   }
 
   return converted
@@ -147,7 +183,7 @@ function renderWidgets(id: string, widget: IWidget) {
 
   console.log('parsed parameters', widget.parameters)
   const widgetPaths: Record<string, JSX.Element> = {
-    sensor: <SensorWidget id={id} widget={widget as ISensorWidget} />,
+    axiom_sensor: <SensorWidget id={id} widget={widget as ISensorWidget} />,
     widget_1: <TestWidget id={id} widget={widget} />,
     widget_2: <TestWidget id={id} widget={widget} />,
   }
