@@ -6,6 +6,7 @@ module.exports = {
   devtool: 'inline-source-map',
   watchOptions: {
     ignored: /node_modules/,
+    poll: 500,
   },
   module: {
     rules: [
