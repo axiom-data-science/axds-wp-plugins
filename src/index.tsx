@@ -4,7 +4,7 @@ import {
   AxiomSensorPlot,
   AxiomVirtualSensorPlot,
   IChartSettingsProps,
-  ISensorProps,
+  convertShortCodeInputToChartSettingsProps
 } from '@axdspub/axiom-charts'
 import * as _ from 'lodash'
 import dot from 'dot-object'
@@ -67,70 +67,67 @@ interface ISensorWidgetProps {
   widget: ISensorWidget
 }
 
-const convertParametersToProps = (parameters: ISensorWidgetParameters) => {
+
+interface IVirtualSensorWidgetParameters extends IWidgetParameters {
+  dataset: string
+  variable: string
+}
+interface IVirtualSensorWidget extends IWidget {
+  parameters: IVirtualSensorWidgetParameters
+}
+interface IVirtualSensorWidgetProps{
+  id: string
+  widget: IVirtualSensorWidget
+
+}
+
+const convertParametersToProps = (parameters: IWidgetParameters) => {
   const converted: any = camelize(parameters)
   const defaultChartSettings =
     converted.defaultChartSettings as IChartSettingsProps
-  console.log('converted', converted)
 
-  if (converted.stationId) {
-    converted.stationId = parseInt(converted.stationId)
-  } else {
-    throw 'station_id is required'
+  return {
+    ...converted,
+    defaultChartSettings: convertShortCodeInputToChartSettingsProps(defaultChartSettings)
   }
-
-  if (converted.sensorId) {
-    converted.parameterGroupId = parseInt(converted.sensorId)
-    delete converted.sensorId
-  } else {
-    if (converted.parameterGroupId) {
-      converted.parameterGroupId = parseInt(converted.parameterGroupId)
-    } else {
-      throw 'sensor_id is required'
-    }
-  }
-
-  if (defaultChartSettings?.height !== undefined) {
-    defaultChartSettings.height = parseInt(String(defaultChartSettings.height))
-  }
-
-  if (defaultChartSettings?.includeControls !== undefined) {
-    defaultChartSettings.includeControls =
-      String(defaultChartSettings.includeControls) === 'true'
-  }
-
-  if (
-    converted?.defaultChartSettings?.plotGroupSettings?.timeSeries?.exclude !==
-    undefined
-  ) {
-    console.log(
-      'exclude',
-      converted.defaultChartSettings.plotGroupSettings.timeSeries.exclude,
-    )
-    converted.defaultChartSettings.plotGroupSettings.timeSeries.exclude =
-      converted.defaultChartSettings.plotGroupSettings.timeSeries.exclude.split(
-        ',',
-      )
-  }
-
-  if (
-    converted?.defaultChartSettings?.plotGroupSettings?.timeSeriesStats
-      ?.include !== undefined
-  ) {
-    converted.defaultChartSettings.plotGroupSettings.timeSeriesStats.include =
-      converted.defaultChartSettings.plotGroupSettings.timeSeriesStats
-        .include === 'true'
-  }
-
-  return converted
 }
 
 const SensorWidget = ({ id, widget }: ISensorWidgetProps) => {
   try {
-    console.log('here')
     const props = convertParametersToProps(widget.parameters)
-    console.log('camelized', props)
+    if (props.stationId) {
+      props.stationId = parseInt(props.stationId)
+    } else {
+      throw 'station_id is required'
+    }
+  
+    if (props.sensorId) {
+      props.parameterGroupId = parseInt(props.sensorId)
+      delete props.sensorId
+    } else {
+      if (props.parameterGroupId) {
+        props.parameterGroupId = parseInt(props.parameterGroupId)
+      } else {
+        throw 'sensor_id is required'
+      }
+    }
     return <AxiomSensorPlot {...props} />
+  } catch (error) {
+    return <div>Error {error}</div>
+  }
+}
+
+const VirtualSensorWidget = ({ id, widget }: IVirtualSensorWidgetProps) => {
+  try {
+    const props = convertParametersToProps(widget.parameters)
+    if (props.dataset === undefined || props.dataset === '') {
+      throw 'dataset is required'
+    }
+  
+    if (props.variable === undefined || props.variable === '') {
+      throw 'variable is required'
+    }
+    return <AxiomVirtualSensorPlot {...props} />
   } catch (error) {
     return <div>Error {error}</div>
   }
@@ -184,6 +181,7 @@ function renderWidgets(id: string, widget: IWidget) {
   console.log('parsed parameters', widget.parameters)
   const widgetPaths: Record<string, JSX.Element> = {
     axiom_sensor: <SensorWidget id={id} widget={widget as ISensorWidget} />,
+    axiom_virtual_sensor: <VirtualSensorWidget id={id} widget={widget as IVirtualSensorWidget} />,
     widget_1: <TestWidget id={id} widget={widget} />,
     widget_2: <TestWidget id={id} widget={widget} />,
   }

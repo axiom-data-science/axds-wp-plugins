@@ -31,6 +31,7 @@ function shortcode( $atts = [], $content = null, $tag = '') {
 add_shortcode('widget_1', 'shortcode');
 add_shortcode('widget_2', 'shortcode');
 add_shortcode('axiom_sensor', 'shortcode');
+add_shortcode('axiom_virtual_sensor', 'shortcode');
 
 function add_parameters() {
 	wp_localize_script( 'axds-wp-plugins', 'widgets', $GLOBALS['widgets'] ); //localize script to pass PHP data to JS
