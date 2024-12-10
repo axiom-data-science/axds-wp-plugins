@@ -1,6 +1,6 @@
 {
   "name": "axds-wp-plugins",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Wordpress plugin for embedding Axiom widgets.",
   "main": "index.tsx",
   "scripts": {
