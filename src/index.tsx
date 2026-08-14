@@ -7,7 +7,6 @@ import {
   convertShortCodeInputToChartSettingsProps
 } from '@axdspub/axiom-charts'
 import * as _ from 'lodash'
-import dot from 'dot-object'
 
 const camelize = (obj: any) =>
   _.transform(obj, (acc: any, value, key: string, target) => {
@@ -75,7 +74,7 @@ interface IVirtualSensorWidgetParameters extends IWidgetParameters {
 interface IVirtualSensorWidget extends IWidget {
   parameters: IVirtualSensorWidgetParameters
 }
-interface IVirtualSensorWidgetProps{
+interface IVirtualSensorWidgetProps {
   id: string
   widget: IVirtualSensorWidget
 
@@ -100,7 +99,7 @@ const SensorWidget = ({ id, widget }: ISensorWidgetProps) => {
     } else {
       throw 'station_id is required'
     }
-  
+
     if (props.sensorId) {
       props.parameterGroupId = parseInt(props.sensorId)
       delete props.sensorId
@@ -123,7 +122,7 @@ const VirtualSensorWidget = ({ id, widget }: IVirtualSensorWidgetProps) => {
     if (props.dataset === undefined || props.dataset === '') {
       throw 'dataset is required'
     }
-  
+
     if (props.variable === undefined || props.variable === '') {
       throw 'variable is required'
     }
@@ -168,8 +167,11 @@ function renderWidgets(id: string, widget: IWidget) {
     const propertyValue = split[1]
     rows[propertyName] = propertyValue
   })
-  const parsedDotNotations = dot.object(rows)
-  console.log('rows', dot.object(rows))
+  let parsedDotNotations: Record<string, any> = {}
+  Object.entries(rows).forEach(([path, value]) => {
+    parsedDotNotations = setPropertiesFromDotNotation(parsedDotNotations, path, value)
+  })
+  console.log('rows', parsedDotNotations)
   widget.parameters = { ...widget.parameters, ...parsedDotNotations }
   Object.entries(widget.parameters).forEach(([key, value]) => {
     const isDotNotation = !isNaN(parseInt(key))
